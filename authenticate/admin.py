@@ -8,6 +8,7 @@ from authenticate.models import CustomUser, UserProfile
 class CustomUserModelAdmin(BaseUserAdmin):
     list_display = (
         "username",
+        "uuid",
         "first_name",
         "last_name",
         "email",
@@ -16,6 +17,7 @@ class CustomUserModelAdmin(BaseUserAdmin):
     )
     list_filter = (
         "username",
+        "uuid",
         "first_name",
         "last_name",
         "email",

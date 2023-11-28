@@ -12,8 +12,8 @@ class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
         fields = ["id", "uuid", "first_name", "last_name", "email", "password"]
 
 
-class UsersSerializer(djoser_serializers.UsersSerializer):
-    class Meta(djoser_serializers.UsersSerializer.Meta):
+class UsersSerializer(djoser_serializers.UserSerializer):
+    class Meta(djoser_serializers.UserSerializer.Meta):
         model = CustomUser
         fields = [
             "id",
