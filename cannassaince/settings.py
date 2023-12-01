@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,7 +53,7 @@ ROOT_URLCONF = "cannassaince.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -81,6 +82,14 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST= 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'cannametrics24@gmail.com'
+EMAIL_HOST_PASSWORD = 'eoqinyumvqcactdc'
+EMAIL_USE_TLS = True
+
 
 
 # Password validation
@@ -144,7 +153,7 @@ CORS_ALLOWED_WHITELIST = [
 ]
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "UPDATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -152,12 +161,14 @@ SIMPLE_JWT = {
 
 DJOSER = {
     "SEND_ACTIVATION_EMAIL": True,
-    # "SEND_CONFIRMATION_EMAIL": True,
-    "ACTIVATION_URL": "auth/activation/?uid={uid}&token={token}",
-    "PASSWORD_RESET_CONFIRM_URL": "auth/reset-password-confirm/{uid}/{token}",
+    "SEND_CONFIRMATION_EMAIL": True,
+    "ACTIVATION_URL":"api/v1/auth/activation/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "/api/auth/reset-password-confirm/{uid}/{token}",
     "SERIALIZERS": {
         "user_create": "authenticate.serializers.UserCreateSerializer",
+        "user":"authenticate.serializers.UsersSerializer"
     },
+   
 }
 
 
@@ -169,12 +180,3 @@ REST_FRAMEWORK = {
     # ]
 }
 
-DJOSER = {
-    "SEND_ACTIVATION_EMAIL": True,
-    "SEND_CONFIRMATION_EMAIL": True,
-    "ACTIVATION_URL": "auth/activation/?uid={uid}&token={token}",
-    "PASSWORD_RESET_CONFIRM_URL": "auth/reset-password-confirm/{uid}/{token}",
-    "SERIALIZERS": {
-        "create_user": "authenticate.serializers.UserCreateSerializer",
-    },
-}

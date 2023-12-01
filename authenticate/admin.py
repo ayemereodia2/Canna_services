@@ -3,11 +3,17 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 # Register your models here.
 from authenticate.models import CustomUser, UserProfile
+from .forms import CustomUserChangeForm, CustomUserCreationForm
 
 
 class CustomUserModelAdmin(BaseUserAdmin):
+    add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
+    model = CustomUser
     list_display = (
+        "id",
         "username",
+        "uuid",
         "first_name",
         "last_name",
         "email",
@@ -15,7 +21,9 @@ class CustomUserModelAdmin(BaseUserAdmin):
         "is_active",
     )
     list_filter = (
+        "id",
         "username",
+        "uuid",
         "first_name",
         "last_name",
         "email",
