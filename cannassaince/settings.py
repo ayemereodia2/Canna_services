@@ -162,7 +162,7 @@ SIMPLE_JWT = {
 DJOSER = {
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_CONFIRMATION_EMAIL": True,
-    "ACTIVATION_URL":"/auth/activation/{uid}/{token}",
+    "ACTIVATION_URL":"api/v1/auth/activation/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_URL": "/api/auth/reset-password-confirm/{uid}/{token}",
     "SERIALIZERS": {
         "user_create": "authenticate.serializers.UserCreateSerializer",
