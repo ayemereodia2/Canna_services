@@ -12,13 +12,13 @@ app_name = "authenticate"
 
 urlpatterns = [
     path("register/", UserViewSet.as_view({"post": "create"}), name="register"),
-    # path('users/', ),
+    path("users/", UserViewSet.as_view({"get": "list"})),
     path("login/", LoginAPIView.as_view(), name="login"),
     path("refresh/", TokenRefreshView.as_view(), name="refresh"),
     path("verify/", TokenVerifyView.as_view(), name="verify"),
     path(
-        "activation/",
-        UserViewSet.as_view({"post" : "activation"}),
+        "activation/<str:uid>/<str:token>/",
+        UserViewSet.as_view({"post": "activation"}),
         name="activation",
     ),
     path(

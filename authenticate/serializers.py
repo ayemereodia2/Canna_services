@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from djoser import serializers as djoser_serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.db import IntegrityError, transaction
+from djoser.conf import settings
+from rest_framework.response import Response
+from rest_framework import status
 
 
 from .models import CustomUser
@@ -10,6 +14,15 @@ class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
     class Meta(djoser_serializers.UserCreateSerializer.Meta):
         model = CustomUser
         fields = ["id", "uuid", "first_name", "last_name", "email", "password"]
+
+    def create(self, validated_data):
+        return CustomUser.objects.create(**validated_data)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        print(data)
+        data["message"] = "success"
+        return data
 
 
 class UsersSerializer(djoser_serializers.UserSerializer):

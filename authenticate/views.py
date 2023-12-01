@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import LoginSerializer, UsersSerializer
+from .serializers import LoginSerializer, UsersSerializer, UserCreateSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 import requests
+from djoser.views import UserViewSet
 
 
 # Create your views here.
@@ -46,14 +47,16 @@ class LoginAPIView(TokenObtainPairView):
             )
 
 
+
+
 class UserActivationView(APIView):
-    def get (self, request, uid, token):
-        protocol = 'https://' if request.is_secure() else 'http://'
+    def get(self, request, uid, token):
+        protocol = "https://" if request.is_secure() else "http://"
         web_url = protocol + request.get_host()
-        uid = request.args['uid']
-        uid = request.args['token']
+        uid = request.args["uid"]
+        uid = request.args["token"]
         post_url = web_url + "/auth/activation/"
-        post_data = {'uid': uid, 'token': token}
-        result = requests.post(post_url, data = post_data)
+        post_data = {"uid": uid, "token": token}
+        result = requests.post(post_url, data=post_data)
         content = result.text
         return Response(content)
