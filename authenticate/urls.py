@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from .views import LoginAPIView, UserActivationView
+from .views import LoginAPIView, FacebookLogin
 
 app_name = "authenticate"
 
@@ -35,5 +35,10 @@ urlpatterns = [
         "reset-password-confirm/<str:uid>/<str:token>/",
         UserViewSet.as_view({"post": "reset_password_confirm"}),
         name="reset_password_confirm",
+    ),
+    path(
+        "login/facebook/callback/",
+        FacebookLogin.as_view(),
+        name="login-with-facebook",
     ),
 ]

@@ -19,6 +19,7 @@ class CustomUserModelAdmin(BaseUserAdmin):
         "email",
         "is_staff",
         "is_active",
+        "created_at"
     )
     list_filter = (
         "id",

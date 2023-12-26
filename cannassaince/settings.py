@@ -1,6 +1,21 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+from pydantic_settings import BaseSettings
+from pydantic import EmailStr, HttpUrl
+from typing import Dict, List
+
+
+class GeneralSettings(BaseSettings):
+
+    CURRENT_HOST: str = 'localhost:8000'
+    BASE_FRONTEND_URL: str = 'localhost:8000'
+    DEBUG: bool = False
+    ALLOWED_HOSTS: List[str] = ['localhost:8000']
+
+
+GENERAL_SETTINGS = GeneralSettings()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,9 +53,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -84,12 +99,11 @@ DATABASES = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST= 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'cannametrics24@gmail.com'
 EMAIL_HOST_PASSWORD = 'eoqinyumvqcactdc'
 EMAIL_USE_TLS = True
-
 
 
 # Password validation
@@ -162,13 +176,13 @@ SIMPLE_JWT = {
 DJOSER = {
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_CONFIRMATION_EMAIL": True,
-    "ACTIVATION_URL":"api/v1/auth/activation/{uid}/{token}",
+    "ACTIVATION_URL": "api/v1/auth/activation/{uid}/{token}/",
     "PASSWORD_RESET_CONFIRM_URL": "/api/auth/reset-password-confirm/{uid}/{token}",
     "SERIALIZERS": {
         "user_create": "authenticate.serializers.UserCreateSerializer",
-        "user":"authenticate.serializers.UsersSerializer"
+        "user": "authenticate.serializers.UsersSerializer"
     },
-   
+
 }
 
 
@@ -180,3 +194,11 @@ REST_FRAMEWORK = {
     # ]
 }
 
+
+class FacebookSettings(BaseSettings):
+    FACEBOOK_SECRET: str = '61934561a676bc597dc37bc121096cd8'
+    FACEBOOK_APP_ID: int = 2640038109488773
+    FACEBOOK_OAUTH_ACCESS_TOKEN: HttpUrl = (
+        "https://graph.facebook.com/oauth/access_token"
+    )
+    FACEBOOK_ACCESS_TOKEN: HttpUrl = "https://graph.facebook.com/v15.0/me"
