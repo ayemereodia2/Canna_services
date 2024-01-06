@@ -7,6 +7,10 @@ from djoser.conf import settings
 from rest_framework.response import Response
 from rest_framework import status
 from . import exceptions as local_exceptions
+from .services import Google
+from cannassaince.settings import GoogleSettings
+from rest_framework.exceptions import AuthenticationFailed
+
 
 
 from .models import CustomUser, UserProfile
@@ -127,7 +131,33 @@ class FacebookLoginSerializer(serializers.Serializer):
     error = serializers.CharField(required=False)
     state = serializers.CharField(required=False)
 
+
 class TokenSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
     state = serializers.CharField(required=False)
+
+
+# class GoogleAuthSerializer(serializers.Serializer):
+#     auth_token = serializers.CharField()
+
+#     def validate_auth_token(self, auth_token):
+#         user_data = Google.validate(auth_token)
+#         try:
+#             user_data['sub']
+#         except:
+#             raise serializers.ValidationError(
+#                 'the token is invalid or expired'
+#             )
+
+#         if user_data['aud'] != GoogleSettings.OAUTH2_CLIENT_ID:
+
+#             raise AuthenticationFailed('oops, who are you?')
+
+#         user_id = user_data['sub']
+#         email = user_data['email']
+#         name = user_data['name']
+#         provider = 'google'
+
+#         return register_social_user(
+#             provider=provider, user_id=user_id, email=email, name=name)

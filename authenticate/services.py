@@ -10,6 +10,9 @@ from cannassaince.settings import FacebookSettings, GeneralSettings
 
 from .models import CustomUser
 
+from google.auth.transport import requests as googlerequests
+from google.oauth2 import id_token
+
 ERROR_MESSAGE = "access_denied"
 
 logger = logging.getLogger(__name__)
@@ -84,3 +87,22 @@ def name_to_username(name: str) -> str:
                 return user_name + str(ending)
         return user_name + "1"
     return user_name
+
+
+class Google:
+    """Google class to fetch the user info and return it"""
+
+    @staticmethod
+    def validate(auth_token):
+        """
+        validate method Queries the Google oAUTH2 api to fetch the user info
+        """
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                auth_token, googlerequests.Request())
+
+            if 'accounts.google.com' in idinfo['iss']:
+                return idinfo
+
+        except:
+            return "The token is either invalid or has expired"

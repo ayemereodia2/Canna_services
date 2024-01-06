@@ -11,20 +11,20 @@ class UserManager(BaseUserManager):
         except ValidationError:
             raise ValueError(_("Please enter a valid email address"))
 
-    def create_user(self, email, first_name, last_name, password, **extra_fields):
+    def create_user(self, email, password=None, **extra_fields):
         if email:
             email = self.normalize_email(email)
             self.email_validator(email)
         else:
             raise ValueError(_("User must have an email address"))
-        if not first_name:
-            raise ValueError(_("User first name is required"))
-        if not last_name:
-            raise ValueError(_("User last name is required"))
+        # if not first_name:
+        #     raise ValueError(_("User first name is required"))
+        # if not last_name:
+        #     raise ValueError(_("User last name is required"))
         user = self.model(
             email=email,
-            first_name=first_name,
-            last_name=last_name,
+            # first_name=first_name,
+            # last_name=last_name,
             **extra_fields,
         )
         user.set_password(password)
