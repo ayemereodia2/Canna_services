@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from .views import LoginAPIView, FacebookLogin, RedirectSocial
+from .views import LoginAPIView, RedirectSocial
 
 app_name = "authenticate"
 

@@ -13,6 +13,8 @@ import requests
 from djoser.views import UserViewSet
 from django.http import HttpResponsePermanentRedirect
 from urllib.parse import urlencode
+from social_core.backends.facebook import FacebookOAuth2
+
 from cannassaince.settings import GeneralSettings
 from .models import CustomUser
 from django.views import View
@@ -156,3 +158,7 @@ class RedirectSocial(View):
         json_obj = {'code': code, 'state': state}
         print(json_obj)
         return JsonResponse(json_obj)
+
+
+class CustomFacebookOAuth2(FacebookOAuth2):
+    REDIRECT_STATE = False

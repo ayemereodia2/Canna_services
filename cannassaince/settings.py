@@ -189,7 +189,9 @@ SIMPLE_JWT = {
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.apple.AppleIdAuth',
     'django.contrib.auth.backends.ModelBackend',
+    'authenticate.views.CustomFacebookOAuth2',
 )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '141047345168-cq5s44gpsj3f1msplu5at9be0l6dg37v.apps.googleusercontent.com'
@@ -198,13 +200,27 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['firstname', 'lastname']
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 
-SOCIAL_AUTH_FACEBOOK_KEY = '2640038109488773'
-SOCIAL_AUTH_FACEBOOK_SECRET = '61934561a676bc597dc37bc121096cd8'
+# SOCIAL_AUTH_FACEBOOK_KEY = '2640038109488773'
+SOCIAL_AUTH_FACEBOOK_KEY = '755942703075357'
+# SOCIAL_AUTH_FACEBOOK_SECRET = '61934561a676bc597dc37bc121096cd8'
+SOCIAL_AUTH_FACEBOOK_SECRET = '9ea40571e0889dfd886329dc1cccf20f'
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
-    'fields': 'email,first_name,last_name'}
+    'fields': 'email, name, last_name'}
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
 
-white_list = ['http://localhost:8000/api/v1/auth/accounts/profile/',]
+SOCIAL_AUTH_APPLE_ID_CLIENT = '...'
+SOCIAL_AUTH_APPLE_ID_TEAM = '...'
+SOCIAL_AUTH_APPLE_ID_KEY = '...'
+SOCIAL_AUTH_APPLE_ID_SECRET = """
+-----BEGIN PRIVATE KEY-----
+MIGTAgE.....
+-----END PRIVATE KEY-----"""
+SOCIAL_AUTH_APPLE_ID_SCOPE = ['email', 'name']
+SOCIAL_AUTH_APPLE_ID_EMAIL_AS_USERNAME = True
+
+white_list = ['http://localhost:8000/api/v1/auth/accounts/profile/',
+              'http://myapp.com/api/v1/auth/accounts/profile/',]
 
 DJOSER = {
     "LOGIN_FIELD": "email",
