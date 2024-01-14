@@ -212,10 +212,8 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_APPLE_ID_CLIENT = '...'
 SOCIAL_AUTH_APPLE_ID_TEAM = '...'
 SOCIAL_AUTH_APPLE_ID_KEY = '...'
-SOCIAL_AUTH_APPLE_ID_SECRET = """
------BEGIN PRIVATE KEY-----
-MIGTAgE.....
------END PRIVATE KEY-----"""
+SOCIAL_AUTH_APPLE_ID_SECRET = ""
+
 SOCIAL_AUTH_APPLE_ID_SCOPE = ['email', 'name']
 SOCIAL_AUTH_APPLE_ID_EMAIL_AS_USERNAME = True
 
@@ -234,7 +232,6 @@ DJOSER = {
         "user_create": "authenticate.serializers.UserCreateSerializer",
         "user": "authenticate.serializers.UsersSerializer"
     },
-
     # "SOCIAL_AUTH_REDIRECT_IS_HTTPS": True
 }
 
@@ -250,7 +247,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"]
     # ]
 }
-
 
 SITE_ID = 1
 

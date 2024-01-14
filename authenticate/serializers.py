@@ -107,23 +107,6 @@ class UserSocialProfileSerializer(serializers.ModelSerializer):
             raise local_exceptions.InvalidFacebookLink
         return validated_data
 
-    # def validate_google(self, validated_data):
-    #     if urlparse(validated_data).netloc not in (
-    #         "www.google.com",
-    #         "google.com",
-    #     ):
-    #         raise local_exceptions.InvalidGoogleLink
-    #     return validated_data
-
-    # def validate_apple(self, validated_data):
-    #     if urlparse(validated_data).netloc not in (
-    #         "www.youtube.com",
-    #         "www.youtu.be",
-    #         "youtube.com",
-    #         "youtu.be",
-    #     ):
-    #         raise local_exceptions.InvalidAppleLink
-    #     return validated_data
 
 
 class FacebookLoginSerializer(serializers.Serializer):
@@ -137,27 +120,3 @@ class TokenSerializer(serializers.Serializer):
     refresh = serializers.CharField()
     state = serializers.CharField(required=False)
 
-
-# class GoogleAuthSerializer(serializers.Serializer):
-#     auth_token = serializers.CharField()
-
-#     def validate_auth_token(self, auth_token):
-#         user_data = Google.validate(auth_token)
-#         try:
-#             user_data['sub']
-#         except:
-#             raise serializers.ValidationError(
-#                 'the token is invalid or expired'
-#             )
-
-#         if user_data['aud'] != GoogleSettings.OAUTH2_CLIENT_ID:
-
-#             raise AuthenticationFailed('oops, who are you?')
-
-#         user_id = user_data['sub']
-#         email = user_data['email']
-#         name = user_data['name']
-#         provider = 'google'
-
-#         return register_social_user(
-#             provider=provider, user_id=user_id, email=email, name=name)

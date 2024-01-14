@@ -11,7 +11,8 @@ app_name = "authenticate"
 
 
 urlpatterns = [
-    path("register/", UserViewSet.as_view({"post": "create"}), name="register"),
+    path("register/",
+         UserViewSet.as_view({"post": "create"}), name="register"),
     path("users/", UserViewSet.as_view({"get": "list"})),
     path("login/", LoginAPIView.as_view(), name="login"),
     path("refresh/", TokenRefreshView.as_view(), name="refresh"),
@@ -36,11 +37,6 @@ urlpatterns = [
         UserViewSet.as_view({"post": "reset_password_confirm"}),
         name="reset_password_confirm",
     ),
-    # path(
-    #     "login/facebook/callback/",
-    #     FacebookLogin.as_view(),
-    #     name="login-with-facebook",
-    # ),
     path('accounts/profile/', RedirectSocial.as_view()),
     path('social/', include('djoser.social.urls')),
 ]
