@@ -1,15 +1,29 @@
-from django.shortcuts import render
+from .services import Facebook, OAuthErrorException, name_to_username
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import LoginSerializer, UsersSerializer, UserCreateSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import LoginSerializer, UsersSerializer, UserCreateSerializer, FacebookLoginSerializer, TokenSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 import requests
 from djoser.views import UserViewSet
+from django.http import HttpResponsePermanentRedirect
+from urllib.parse import urlencode
+from social_core.backends.facebook import FacebookOAuth2
+
+from cannassaince.settings import GeneralSettings
+from .models import CustomUser
+from django.views import View
+from django.http import JsonResponse
+from typing import Dict, Optional
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -47,8 +61,6 @@ class LoginAPIView(TokenObtainPairView):
             )
 
 
-
-
 class UserActivationView(APIView):
     def get(self, request, uid, token):
         protocol = "https://" if request.is_secure() else "http://"
@@ -60,3 +72,15 @@ class UserActivationView(APIView):
         result = requests.post(post_url, data=post_data)
         content = result.text
         return Response(content)
+
+class RedirectSocial(View):
+
+    def get(self, request, *args, **kwargs):
+        code, state = str(request.GET['code']), str(request.GET['state'])
+        json_obj = {'code': code, 'state': state}
+        print(json_obj)
+        return JsonResponse(json_obj)
+
+
+class CustomFacebookOAuth2(FacebookOAuth2):
+    REDIRECT_STATE = False

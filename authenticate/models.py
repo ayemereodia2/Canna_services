@@ -25,7 +25,7 @@ class CustomUser(
     email = models.EmailField(
         verbose_name="Email", unique=True, blank=False, null=False
     )
-    username = models.CharField(max_length=16, unique=True)
+    username = models.CharField(max_length=20, unique=True)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     user_image = models.ImageField(upload_to=user_image, blank=True, null=True)
@@ -68,4 +68,4 @@ class OneTimePassword(models.Model):
     code = models.CharField(max_length=4, unique=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.firstname} passcode"
+        return f"{self.user.first_name} passcode"

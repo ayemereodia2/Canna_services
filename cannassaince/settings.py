@@ -1,6 +1,21 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+from pydantic_settings import BaseSettings
+from pydantic import EmailStr, HttpUrl
+from typing import Dict, List
+
+
+class GeneralSettings(BaseSettings):
+
+    CURRENT_HOST: str = 'localhost:8000'
+    BASE_FRONTEND_URL: str = 'http://127.0.0.1:8000/api/v1/auth/users'
+    DEBUG: bool = False
+    ALLOWED_HOSTS: List[str] = ['http://localhost:8000']
+
+
+GENERAL_SETTINGS = GeneralSettings()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "rest_framework",
     "corsheaders",
     "rest_framework_simplejwt",
@@ -35,12 +51,14 @@ INSTALLED_APPS = [
     "djoser",
     "authenticate.apps.AuthenticateConfig",
     "shared.apps.SharedConfig",
+    'social_django',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -61,6 +79,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -84,12 +104,14 @@ DATABASES = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST= 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'cannametrics24@gmail.com'
 EMAIL_HOST_PASSWORD = 'eoqinyumvqcactdc'
 EMAIL_USE_TLS = True
 
+
+# SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 
 
 # Password validation
@@ -157,26 +179,87 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "UPDATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+    ),
 }
+
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.apple.AppleIdAuth',
+    'django.contrib.auth.backends.ModelBackend',
+    'authenticate.views.CustomFacebookOAuth2',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '141047345168-cq5s44gpsj3f1msplu5at9be0l6dg37v.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['firstname', 'lastname']
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
+
+# SOCIAL_AUTH_FACEBOOK_KEY = '2640038109488773'
+SOCIAL_AUTH_FACEBOOK_KEY = '755942703075357'
+# SOCIAL_AUTH_FACEBOOK_SECRET = '61934561a676bc597dc37bc121096cd8'
+SOCIAL_AUTH_FACEBOOK_SECRET = '9ea40571e0889dfd886329dc1cccf20f'
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'email, name, last_name'}
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+
+
+SOCIAL_AUTH_APPLE_ID_CLIENT = '...'
+SOCIAL_AUTH_APPLE_ID_TEAM = '...'
+SOCIAL_AUTH_APPLE_ID_KEY = '...'
+SOCIAL_AUTH_APPLE_ID_SECRET = ""
+
+SOCIAL_AUTH_APPLE_ID_SCOPE = ['email', 'name']
+SOCIAL_AUTH_APPLE_ID_EMAIL_AS_USERNAME = True
+
+white_list = ['http://localhost:8000/api/v1/auth/accounts/profile/',
+              'http://myapp.com/api/v1/auth/accounts/profile/',]
 
 DJOSER = {
+    "LOGIN_FIELD": "email",
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_CONFIRMATION_EMAIL": True,
-    "ACTIVATION_URL":"api/v1/auth/activation/{uid}/{token}",
-    "PASSWORD_RESET_CONFIRM_URL": "/api/auth/reset-password-confirm/{uid}/{token}",
+    "ACTIVATION_URL": "api/v1/auth/activation/{uid}/{token}/",
+    "SOCIAL_AUTH_TOKEN_STRATEGY": 'djoser.social.token.jwt.TokenStrategy',
+    "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": white_list,
+    "PASSWORD_RESET_CONFIRM_URL": "/api/v1/auth/reset-password-confirm/{uid}/{token}",
     "SERIALIZERS": {
         "user_create": "authenticate.serializers.UserCreateSerializer",
-        "user":"authenticate.serializers.UsersSerializer"
+        "user": "authenticate.serializers.UsersSerializer"
     },
-   
+    # "SOCIAL_AUTH_REDIRECT_IS_HTTPS": True
 }
 
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication"
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"]
     # ]
 }
 
+SITE_ID = 1
+
+
+class FacebookSettings(BaseSettings):
+    FACEBOOK_SECRET: str = '61934561a676bc597dc37bc121096cd8'
+    FACEBOOK_APP_ID: int = 2640038109488773
+    FACEBOOK_OAUTH_ACCESS_TOKEN: HttpUrl = (
+        "https://graph.facebook.com/oauth/access_token"
+    )
+    FACEBOOK_ACCESS_TOKEN: HttpUrl = "https://graph.facebook.com/v15.0/me"
+
+
+class GoogleSettings(BaseSettings):
+    OAUTH2_CLIENT_ID: str = '141047345168-cq5s44gpsj3f1msplu5at9be0l6dg37v.apps.googleusercontent.com'
+    GOOGLE_OAUTH2_CLIENT_SECRET: str = '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'

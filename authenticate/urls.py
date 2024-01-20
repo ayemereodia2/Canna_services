@@ -1,17 +1,18 @@
-from django.urls import path
+from django.urls import path, include
 from djoser.views import UserViewSet
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
-from .views import LoginAPIView, UserActivationView
+from .views import LoginAPIView, RedirectSocial
 
 app_name = "authenticate"
 
 
 urlpatterns = [
-    path("register/", UserViewSet.as_view({"post": "create"}), name="register"),
+    path("register/",
+         UserViewSet.as_view({"post": "create"}), name="register"),
     path("users/", UserViewSet.as_view({"get": "list"})),
     path("login/", LoginAPIView.as_view(), name="login"),
     path("refresh/", TokenRefreshView.as_view(), name="refresh"),
@@ -36,4 +37,6 @@ urlpatterns = [
         UserViewSet.as_view({"post": "reset_password_confirm"}),
         name="reset_password_confirm",
     ),
+    path('accounts/profile/', RedirectSocial.as_view()),
+    path('social/', include('djoser.social.urls')),
 ]

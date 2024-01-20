@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from rest_framework import serializers
 from djoser import serializers as djoser_serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -5,9 +6,14 @@ from django.db import IntegrityError, transaction
 from djoser.conf import settings
 from rest_framework.response import Response
 from rest_framework import status
+from . import exceptions as local_exceptions
+from .services import Google
+from cannassaince.settings import GoogleSettings
+from rest_framework.exceptions import AuthenticationFailed
 
 
-from .models import CustomUser
+
+from .models import CustomUser, UserProfile
 
 
 class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
@@ -15,8 +21,14 @@ class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
         model = CustomUser
         fields = ["id", "uuid", "first_name", "last_name", "email", "password"]
 
+    # def create(self, validated_data):
+    #     return CustomUser.objects.create(**validated_data)
     def create(self, validated_data):
-        return CustomUser.objects.create(**validated_data)
+        try:
+            user = self.perform_create(validated_data)
+        except IntegrityError:
+            self.fail("cannot_create_user")
+        return user
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -59,3 +71,52 @@ class LoginSerializer(TokenObtainPairSerializer):
         }
 
         return token
+
+
+class UserSocialProfileSerializer(serializers.ModelSerializer):
+    """Serializer for adding extra info to the user profile."""
+
+    user = UsersSerializer()
+    facebook = serializers.URLField()
+    apple = serializers.URLField()
+    google = serializers.URLField()
+
+    class Meta:
+        model = UserProfile
+        fields = ["user", "facebook", "apple", "google"]
+        read_only_fields = ["user"]
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", None)
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+
+        if user_data is not None:
+            for k, v in user_data.items():
+                setattr(instance.user, k, v)
+
+        instance.save()
+        return instance
+
+    def validate_facebook(self, validated_data):
+        if urlparse(validated_data).netloc not in (
+            "www.facebook.com",
+            "facebook.com",
+            "web.facebook.com",
+        ):
+            raise local_exceptions.InvalidFacebookLink
+        return validated_data
+
+
+
+class FacebookLoginSerializer(serializers.Serializer):
+    code = serializers.CharField(required=False)
+    error = serializers.CharField(required=False)
+    state = serializers.CharField(required=False)
+
+
+class TokenSerializer(serializers.Serializer):
+    access = serializers.CharField()
+    refresh = serializers.CharField()
+    state = serializers.CharField(required=False)
+
