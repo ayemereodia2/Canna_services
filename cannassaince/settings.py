@@ -94,12 +94,12 @@ WSGI_APPLICATION = "cannassaince.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "password",
-        "HOST": "db",
-        "PORT": "5432",
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'can_rest_db',
+        'USER': 'postgres',
+        'PASSWORD': 'Swift9471@@',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

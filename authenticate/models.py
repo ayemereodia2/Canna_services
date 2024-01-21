@@ -26,16 +26,16 @@ class CustomUser(
         verbose_name="Email", unique=True, blank=False, null=False
     )
     username = models.CharField(max_length=20, unique=True)
-    first_name = models.CharField(max_length=50, blank=True, null=True)
-    last_name = models.CharField(max_length=50, blank=True, null=True)
-    user_image = models.ImageField(upload_to=user_image, blank=True, null=True)
+    # first_name = models.CharField(max_length=50, blank=True, null=True)
+    # last_name = models.CharField(max_length=50, blank=True, null=True)
+    # user_image = models.ImageField(upload_to=user_image, blank=True, null=True)
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]
+    
 
-    objects = UserManager()
+    user_manager = UserManager()
 
     def save(self, *args, **kwargs):
+        
         if not self.username:
             sliced_chars = self.email[:4]
             random_chars = "".join(

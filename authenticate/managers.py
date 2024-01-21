@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, first_name, last_name, password, **extra_fields):
+    def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         if extra_fields.get("is_staff") is not True:
@@ -35,6 +35,6 @@ class UserManager(BaseUserManager):
             raise ValueError(_("is_superuser must be true for admin user"))
 
         user = self.create_user(
-            email, first_name, last_name, password, **extra_fields)
+            email, password, **extra_fields)
         user.save(using=self._db)
         return user

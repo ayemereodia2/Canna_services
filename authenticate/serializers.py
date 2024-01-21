@@ -10,7 +10,8 @@ from . import exceptions as local_exceptions
 from .services import Google
 from cannassaince.settings import GoogleSettings
 from rest_framework.exceptions import AuthenticationFailed
-
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 
 from .models import CustomUser, UserProfile
@@ -19,7 +20,7 @@ from .models import CustomUser, UserProfile
 class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
     class Meta(djoser_serializers.UserCreateSerializer.Meta):
         model = CustomUser
-        fields = ["id", "uuid", "first_name", "last_name", "email", "password"]
+        fields = ["id", "uuid","username", "email", "password"]
 
     # def create(self, validated_data):
     #     return CustomUser.objects.create(**validated_data)
@@ -43,8 +44,6 @@ class UsersSerializer(djoser_serializers.UserSerializer):
         fields = [
             "id",
             "uuid",
-            "first_name",
-            "last_name",
             "email",
             "username",
             "is_active",
@@ -63,8 +62,6 @@ class LoginSerializer(TokenObtainPairSerializer):
         token["user_info"] = {
             "email": user.email,
             "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
             "is_staff": user.is_staff,
             "is_superuser": user.is_superuser,
             "is_active": user.is_active,
@@ -119,4 +116,3 @@ class TokenSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
     state = serializers.CharField(required=False)
-
